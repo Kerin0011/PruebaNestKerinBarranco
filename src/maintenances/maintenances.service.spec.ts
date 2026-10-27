@@ -1,4 +1,4 @@
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
@@ -77,6 +77,39 @@ describe('MaintenancesService', () => {
       mileage: 50000,
       scheduledDate: '2026-11-01T10:00:00Z',
     };
+
+    it('rechaza la creación si el vehículo no existe', async () => {
+      mockVehicleRepo.findOne.mockResolvedValue(null);
+      await expect(service.create(validDto)).rejects.toThrow(NotFoundException);
+    });
+
+    it('rechaza la creación si el mecánico no existe', async () => {
+      mockVehicleRepo.findOne.mockResolvedValue({
+        id: 'v1',
+        status: VehicleStatus.AVAILABLE,
+        mileage: 40000,
+      });
+      mockMaintenanceRepo.findOne.mockResolvedValue(null);
+      mockMechanicRepo.findOne.mockResolvedValue(null);
+
+      await expect(service.create(validDto)).rejects.toThrow(NotFoundException);
+    });
+
+    it('rechaza la creación si el taller no existe', async () => {
+      mockVehicleRepo.findOne.mockResolvedValue({
+        id: 'v1',
+        status: VehicleStatus.AVAILABLE,
+        mileage: 40000,
+      });
+      mockMaintenanceRepo.findOne.mockResolvedValue(null);
+      mockMechanicRepo.findOne.mockResolvedValue({
+        id: 'm1',
+        status: MechanicStatus.ACTIVE,
+      });
+      mockWorkshopRepo.findOne.mockResolvedValue(null);
+
+      await expect(service.create(validDto)).rejects.toThrow(NotFoundException);
+    });
 
     it('rechaza la creación si el vehículo está en estado INACTIVE', async () => {
       mockVehicleRepo.findOne.mockResolvedValue({
@@ -386,9 +419,109 @@ describe('MaintenancesService', () => {
         service.updateStatus('m1', { status: MaintenanceStatus.IN_PROGRESS }),
       ).rejects.toThrow(BadRequestException);
     });
+
+    it('rechaza completar el mantenimiento si el kilometraje final es inferior al kilometraje registrado al iniciar', async () => {
+      const maintenance = {
+        id: 'm1',
+        status: MaintenanceStatus.IN_PROGRESS,
+        vehicleId: 'v1',
+        mileage: 50000,
+      };
+      const vehicle = {
+        id: 'v1',
+        status: VehicleStatus.IN_MAINTENANCE,
+        mileage: 50000,
+      };
+
+      mockEntityManager.findOne.mockImplementation((entity) => {
+        if (entity === Maintenance) return Promise.resolve(maintenance);
+        if (entity === Vehicle) return Promise.resolve(vehicle);
+        return Promise.resolve(null);
+      });
+
+      await expect(
+        service.updateStatus('m1', {
+          status: MaintenanceStatus.COMPLETED,
+          workDone: 'Mantenimiento general',
+          finalCost: 300,
+          completedDate: '2026-11-02T10:00:00Z',
+          finalMileage: 49900,
+        }),
+      ).rejects.toThrow(BadRequestException);
+    });
+
+    it('cancela el mantenimiento y libera el vehículo a AVAILABLE si estaba IN_MAINTENANCE', async () => {
+      const maintenance = {
+        id: 'm1',
+        status: MaintenanceStatus.IN_PROGRESS,
+        vehicleId: 'v1',
+        mileage: 50000,
+      };
+      const vehicle = {
+        id: 'v1',
+        status: VehicleStatus.IN_MAINTENANCE,
+        mileage: 50000,
+      };
+
+      mockEntityManager.findOne.mockImplementation((entity) => {
+        if (entity === Maintenance) return Promise.resolve(maintenance);
+        if (entity === Vehicle) return Promise.resolve(vehicle);
+        return Promise.resolve(null);
+      });
+      mockEntityManager.save.mockImplementation((_, data) => Promise.resolve(data));
+
+      const result = await service.updateStatus('m1', {
+        status: MaintenanceStatus.CANCELLED,
+      });
+
+      expect(result.status).toBe(MaintenanceStatus.CANCELLED);
+      expect(vehicle.status).toBe(VehicleStatus.AVAILABLE);
+    });
+
+    it('rechaza la actualización de estado si un técnico intenta modificar un mantenimiento ajeno', async () => {
+      const maintenance = {
+        id: 'm1',
+        status: MaintenanceStatus.SCHEDULED,
+        mechanic: { userId: 'otro-user-id' },
+      };
+
+      mockEntityManager.findOne.mockImplementation((entity) => {
+        if (entity === Maintenance) return Promise.resolve(maintenance);
+        return Promise.resolve(null);
+      });
+
+      await expect(
+        service.updateStatus(
+          'm1',
+          { status: MaintenanceStatus.IN_PROGRESS },
+          { sub: 'mi-user-id', role: 'TECHNICIAN' as any, email: 'tech@fleetcore.com' },
+        ),
+      ).rejects.toThrow(ForbiddenException);
+    });
   });
 
-  describe('findByVehicle', () => {
+  describe('Consultas de mantenimientos', () => {
+    it('consulta todos los mantenimientos activos (SCHEDULED o IN_PROGRESS)', async () => {
+      mockMaintenanceRepo.find.mockResolvedValue([
+        { id: 'm1', status: MaintenanceStatus.SCHEDULED },
+        { id: 'm2', status: MaintenanceStatus.IN_PROGRESS },
+      ]);
+
+      const result = await service.findActive();
+      expect(result).toHaveLength(2);
+      expect(mockMaintenanceRepo.find).toHaveBeenCalled();
+    });
+
+    it('consulta los mantenimientos asignados a un mecánico específico', async () => {
+      mockMaintenanceRepo.find.mockResolvedValue([{ id: 'm1', mechanicId: 'mech-1' }]);
+
+      const result = await service.findByMechanic('mech-1');
+      expect(result).toHaveLength(1);
+      expect(mockMaintenanceRepo.find).toHaveBeenCalledWith(
+        expect.objectContaining({ where: { mechanicId: 'mech-1' } }),
+      );
+    });
+
     it('busca el historial de mantenimientos por placa de vehículo', async () => {
       mockVehicleRepo.findOne.mockResolvedValue({ id: 'v1', plate: 'AAA111' });
       mockMaintenanceRepo.find.mockResolvedValue([{ id: 'm1', vehicleId: 'v1' }]);
@@ -400,7 +533,7 @@ describe('MaintenancesService', () => {
       );
     });
 
-    it('lanza NotFoundException si el vehículo no existe', async () => {
+    it('lanza NotFoundException si el vehículo consultado no existe', async () => {
       mockVehicleRepo.findOne.mockResolvedValue(null);
       await expect(service.findByVehicle('NOEXISTE')).rejects.toThrow(NotFoundException);
     });
