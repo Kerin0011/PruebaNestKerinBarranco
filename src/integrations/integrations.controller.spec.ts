@@ -1,3 +1,4 @@
+import { jest } from '@jest/globals';
 import { IntegrationsController } from './integrations.controller.js';
 
 describe('IntegrationsController', () => {

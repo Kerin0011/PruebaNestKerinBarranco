@@ -1,3 +1,4 @@
+import { jest } from '@jest/globals';
 import { ConflictException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Test } from '@nestjs/testing';
