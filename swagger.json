@@ -1,0 +1,1526 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/api/users/me": {
+      "get": {
+        "operationId": "UsersController_me",
+        "parameters": [],
+        "responses": {
+          "401": {
+            "description": "Token ausente o inválido"
+          },
+          "403": {
+            "description": "Rol sin permisos"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Obtener información del usuario autenticado",
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/api/users": {
+      "get": {
+        "operationId": "UsersController_findAll",
+        "parameters": [],
+        "responses": {
+          "401": {
+            "description": "Token ausente o inválido"
+          },
+          "403": {
+            "description": "Rol sin permisos"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Listar todos los usuarios (Admin)",
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/api/users/{id}": {
+      "get": {
+        "operationId": "UsersController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Token ausente o inválido"
+          },
+          "403": {
+            "description": "Rol sin permisos"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Obtener un usuario por ID (Admin)",
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/api/auth/register": {
+      "post": {
+        "operationId": "AuthController_register",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "operationId": "AuthController_login",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/vehicles": {
+      "post": {
+        "operationId": "VehiclesController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateVehicleDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Token ausente o inválido"
+          },
+          "403": {
+            "description": "Rol sin permisos"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Registrar un nuevo vehículo en la flota (Admin)",
+        "tags": [
+          "vehicles"
+        ]
+      },
+      "get": {
+        "operationId": "VehiclesController_findAll",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 10,
+              "type": "number"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Buscar por placa, marca o modelo",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "AVAILABLE",
+                "IN_MAINTENANCE",
+                "INACTIVE"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Token ausente o inválido"
+          },
+          "403": {
+            "description": "Rol sin permisos"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Listar vehículos con paginación y filtros",
+        "tags": [
+          "vehicles"
+        ]
+      }
+    },
+    "/api/vehicles/{term}": {
+      "get": {
+        "operationId": "VehiclesController_findOne",
+        "parameters": [
+          {
+            "name": "term",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Token ausente o inválido"
+          },
+          "403": {
+            "description": "Rol sin permisos"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Consultar vehículo por ID (UUID) o placa",
+        "tags": [
+          "vehicles"
+        ]
+      }
+    },
+    "/api/vehicles/{id}": {
+      "patch": {
+        "operationId": "VehiclesController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateVehicleDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Token ausente o inválido"
+          },
+          "403": {
+            "description": "Rol sin permisos"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Actualizar información de un vehículo (Admin)",
+        "tags": [
+          "vehicles"
+        ]
+      },
+      "delete": {
+        "operationId": "VehiclesController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Token ausente o inválido"
+          },
+          "403": {
+            "description": "Rol sin permisos"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Inactivar/Eliminar lógicamente un vehículo (Admin)",
+        "tags": [
+          "vehicles"
+        ]
+      }
+    },
+    "/api/mechanics": {
+      "post": {
+        "operationId": "MechanicsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMechanicDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Token ausente o inválido"
+          },
+          "403": {
+            "description": "Rol sin permisos"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Registrar un nuevo mecánico (Admin)",
+        "tags": [
+          "mechanics"
+        ]
+      },
+      "get": {
+        "operationId": "MechanicsController_findAll",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 10,
+              "type": "number"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Buscar por nombre, correo o especialidad",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ACTIVE",
+                "INACTIVE"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Token ausente o inválido"
+          },
+          "403": {
+            "description": "Rol sin permisos"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Listar mecánicos con paginación y filtros",
+        "tags": [
+          "mechanics"
+        ]
+      }
+    },
+    "/api/mechanics/{id}": {
+      "get": {
+        "operationId": "MechanicsController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Token ausente o inválido"
+          },
+          "403": {
+            "description": "Rol sin permisos"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Consultar información de un mecánico por ID",
+        "tags": [
+          "mechanics"
+        ]
+      },
+      "patch": {
+        "operationId": "MechanicsController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateMechanicDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Token ausente o inválido"
+          },
+          "403": {
+            "description": "Rol sin permisos"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Actualizar información de un mecánico (Admin)",
+        "tags": [
+          "mechanics"
+        ]
+      }
+    },
+    "/api/mechanics/{id}/toggle-status": {
+      "patch": {
+        "operationId": "MechanicsController_toggleStatus",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Token ausente o inválido"
+          },
+          "403": {
+            "description": "Rol sin permisos"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Activar o inactivar un mecánico (Admin)",
+        "tags": [
+          "mechanics"
+        ]
+      }
+    },
+    "/api/workshops": {
+      "post": {
+        "operationId": "WorkshopsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateWorkshopDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Token ausente o inválido"
+          },
+          "403": {
+            "description": "Rol sin permisos"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Registrar un nuevo taller (Admin)",
+        "tags": [
+          "workshops"
+        ]
+      },
+      "get": {
+        "operationId": "WorkshopsController_findAll",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 10,
+              "type": "number"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Buscar por nombre o dirección",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ACTIVE",
+                "INACTIVE"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Token ausente o inválido"
+          },
+          "403": {
+            "description": "Rol sin permisos"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Listar todos los talleres con paginación y filtros",
+        "tags": [
+          "workshops"
+        ]
+      }
+    },
+    "/api/workshops/active": {
+      "get": {
+        "operationId": "WorkshopsController_findActive",
+        "parameters": [],
+        "responses": {
+          "401": {
+            "description": "Token ausente o inválido"
+          },
+          "403": {
+            "description": "Rol sin permisos"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Listar talleres activos",
+        "tags": [
+          "workshops"
+        ]
+      }
+    },
+    "/api/workshops/{id}": {
+      "get": {
+        "operationId": "WorkshopsController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Token ausente o inválido"
+          },
+          "403": {
+            "description": "Rol sin permisos"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Consultar información de un taller por ID",
+        "tags": [
+          "workshops"
+        ]
+      },
+      "patch": {
+        "operationId": "WorkshopsController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateWorkshopDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Token ausente o inválido"
+          },
+          "403": {
+            "description": "Rol sin permisos"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Actualizar información de un taller (Admin)",
+        "tags": [
+          "workshops"
+        ]
+      }
+    },
+    "/api/workshops/{id}/toggle-status": {
+      "patch": {
+        "operationId": "WorkshopsController_toggleStatus",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Token ausente o inválido"
+          },
+          "403": {
+            "description": "Rol sin permisos"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Activar o inactivar un taller (Admin)",
+        "tags": [
+          "workshops"
+        ]
+      }
+    },
+    "/api/maintenances": {
+      "post": {
+        "operationId": "MaintenancesController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMaintenanceDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Token ausente o inválido"
+          },
+          "403": {
+            "description": "Rol sin permisos"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Crear un nuevo mantenimiento para un vehículo (Admin)",
+        "tags": [
+          "maintenances"
+        ]
+      },
+      "get": {
+        "operationId": "MaintenancesController_findAll",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 10,
+              "type": "number"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "SCHEDULED",
+                "IN_PROGRESS",
+                "COMPLETED",
+                "CANCELLED"
+              ]
+            }
+          },
+          {
+            "name": "type",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "PREVENTIVE",
+                "CORRECTIVE"
+              ]
+            }
+          },
+          {
+            "name": "vehicleId",
+            "required": false,
+            "in": "query",
+            "description": "Filtrar por ID de vehículo",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "mechanicId",
+            "required": false,
+            "in": "query",
+            "description": "Filtrar por ID de mecánico",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "workshopId",
+            "required": false,
+            "in": "query",
+            "description": "Filtrar por ID de taller",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Token ausente o inválido"
+          },
+          "403": {
+            "description": "Rol sin permisos"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Listar todos los mantenimientos con filtros y paginación",
+        "tags": [
+          "maintenances"
+        ]
+      }
+    },
+    "/api/maintenances/active": {
+      "get": {
+        "operationId": "MaintenancesController_findActive",
+        "parameters": [],
+        "responses": {
+          "401": {
+            "description": "Token ausente o inválido"
+          },
+          "403": {
+            "description": "Rol sin permisos"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Consultar mantenimientos activos (SCHEDULED o IN_PROGRESS)",
+        "tags": [
+          "maintenances"
+        ]
+      }
+    },
+    "/api/maintenances/my-assigned": {
+      "get": {
+        "operationId": "MaintenancesController_findMyAssigned",
+        "parameters": [],
+        "responses": {
+          "401": {
+            "description": "Token ausente o inválido"
+          },
+          "403": {
+            "description": "Rol sin permisos"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Consultar mantenimientos asignados al técnico en sesión",
+        "tags": [
+          "maintenances"
+        ]
+      }
+    },
+    "/api/maintenances/vehicle/{vehicleId}": {
+      "get": {
+        "operationId": "MaintenancesController_findByVehicle",
+        "parameters": [
+          {
+            "name": "vehicleId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Token ausente o inválido"
+          },
+          "403": {
+            "description": "Rol sin permisos"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Consultar historial de mantenimientos de un vehículo específico",
+        "tags": [
+          "maintenances"
+        ]
+      }
+    },
+    "/api/maintenances/mechanic/{mechanicId}": {
+      "get": {
+        "operationId": "MaintenancesController_findByMechanic",
+        "parameters": [
+          {
+            "name": "mechanicId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Token ausente o inválido"
+          },
+          "403": {
+            "description": "Rol sin permisos"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Consultar mantenimientos asignados a un mecánico específico",
+        "tags": [
+          "maintenances"
+        ]
+      }
+    },
+    "/api/maintenances/{id}": {
+      "get": {
+        "operationId": "MaintenancesController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Token ausente o inválido"
+          },
+          "403": {
+            "description": "Rol sin permisos"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Consultar detalle de un mantenimiento por ID",
+        "tags": [
+          "maintenances"
+        ]
+      }
+    },
+    "/api/maintenances/{id}/status": {
+      "patch": {
+        "operationId": "MaintenancesController_updateStatus",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateStatusDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Token ausente o inválido"
+          },
+          "403": {
+            "description": "Rol sin permisos"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Actualizar estado de un mantenimiento (IN_PROGRESS, COMPLETED con cierre, o CANCELLED)",
+        "tags": [
+          "maintenances"
+        ]
+      }
+    },
+    "/api/integrations/fleet-status": {
+      "get": {
+        "operationId": "IntegrationsController_getFleetStatus",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Consultar resumen de estado de flota para sistemas externos (requiere cabecera x-api-key)",
+        "tags": [
+          "integrations"
+        ]
+      }
+    },
+    "/api/integrations/active-maintenances": {
+      "get": {
+        "operationId": "IntegrationsController_getActiveMaintenances",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Consultar mantenimientos activos para ERP externo (requiere cabecera x-api-key)",
+        "tags": [
+          "integrations"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "FleetCore API — Gestión de Mantenimiento de Flota",
+    "description": "API REST para la gestión del ciclo de vida de mantenimientos, vehículos, mecánicos y talleres de FleetCore.",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "bearer": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http"
+      },
+      "x-api-key": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key"
+      }
+    },
+    "schemas": {
+      "RegisterDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Carlos Gómez"
+          },
+          "email": {
+            "type": "string",
+            "example": "carlos@fleetcore.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "Tech12345!"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "ADMIN",
+              "TECHNICIAN"
+            ],
+            "default": "TECHNICIAN"
+          }
+        },
+        "required": [
+          "name",
+          "email",
+          "password"
+        ]
+      },
+      "LoginDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "admin@fleetcore.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "Admin12345!"
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ]
+      },
+      "CreateVehicleDto": {
+        "type": "object",
+        "properties": {
+          "plate": {
+            "type": "string",
+            "example": "AAA111",
+            "description": "Placa única del vehículo"
+          },
+          "brand": {
+            "type": "string",
+            "example": "Toyota"
+          },
+          "model": {
+            "type": "string",
+            "example": "Hilux"
+          },
+          "year": {
+            "type": "number",
+            "example": 2022
+          },
+          "mileage": {
+            "type": "number",
+            "example": 45000,
+            "description": "Kilometraje actual"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "AVAILABLE",
+              "IN_MAINTENANCE",
+              "INACTIVE"
+            ],
+            "default": "AVAILABLE"
+          }
+        },
+        "required": [
+          "plate",
+          "brand",
+          "model",
+          "year",
+          "mileage"
+        ]
+      },
+      "UpdateVehicleDto": {
+        "type": "object",
+        "properties": {
+          "plate": {
+            "type": "string",
+            "example": "AAA111",
+            "description": "Placa única del vehículo"
+          },
+          "brand": {
+            "type": "string",
+            "example": "Toyota"
+          },
+          "model": {
+            "type": "string",
+            "example": "Hilux"
+          },
+          "year": {
+            "type": "number",
+            "example": 2022
+          },
+          "mileage": {
+            "type": "number",
+            "example": 45000,
+            "description": "Kilometraje actual"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "AVAILABLE",
+              "IN_MAINTENANCE",
+              "INACTIVE"
+            ],
+            "default": "AVAILABLE"
+          }
+        }
+      },
+      "CreateMechanicDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Carlos Gómez"
+          },
+          "email": {
+            "type": "string",
+            "example": "carlos.gomez@fleetcore.com"
+          },
+          "specialty": {
+            "type": "string",
+            "example": "Motores Diésel"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "INACTIVE"
+            ],
+            "default": "ACTIVE"
+          },
+          "userId": {
+            "type": "string",
+            "description": "ID del usuario asociado (rol TECHNICIAN)"
+          }
+        },
+        "required": [
+          "name",
+          "email",
+          "specialty"
+        ]
+      },
+      "UpdateMechanicDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Carlos Gómez"
+          },
+          "email": {
+            "type": "string",
+            "example": "carlos.gomez@fleetcore.com"
+          },
+          "specialty": {
+            "type": "string",
+            "example": "Motores Diésel"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "INACTIVE"
+            ],
+            "default": "ACTIVE"
+          },
+          "userId": {
+            "type": "string",
+            "description": "ID del usuario asociado (rol TECHNICIAN)"
+          }
+        }
+      },
+      "CreateWorkshopDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Taller Central FleetCore"
+          },
+          "address": {
+            "type": "string",
+            "example": "Av. Industrial 450, Medellín"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "INACTIVE"
+            ],
+            "default": "ACTIVE"
+          }
+        },
+        "required": [
+          "name",
+          "address"
+        ]
+      },
+      "UpdateWorkshopDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Taller Central FleetCore"
+          },
+          "address": {
+            "type": "string",
+            "example": "Av. Industrial 450, Medellín"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "INACTIVE"
+            ],
+            "default": "ACTIVE"
+          }
+        }
+      },
+      "CreateMaintenanceDto": {
+        "type": "object",
+        "properties": {
+          "vehicleId": {
+            "type": "string",
+            "description": "ID del vehículo (UUID)"
+          },
+          "mechanicId": {
+            "type": "string",
+            "description": "ID del mecánico asignado (UUID)"
+          },
+          "workshopId": {
+            "type": "string",
+            "description": "ID del taller donde se realizará (UUID)"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "PREVENTIVE",
+              "CORRECTIVE"
+            ],
+            "example": "PREVENTIVE"
+          },
+          "description": {
+            "type": "string",
+            "example": "Mantenimiento preventivo general de 50.000 km"
+          },
+          "mileage": {
+            "type": "number",
+            "example": 45000,
+            "description": "Kilometraje registrado para el mantenimiento"
+          },
+          "scheduledDate": {
+            "type": "string",
+            "example": "2026-11-01T08:00:00Z",
+            "description": "Fecha y hora programada (ISO 8601)"
+          }
+        },
+        "required": [
+          "vehicleId",
+          "mechanicId",
+          "workshopId",
+          "type",
+          "description",
+          "mileage",
+          "scheduledDate"
+        ]
+      },
+      "UpdateStatusDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "SCHEDULED",
+              "IN_PROGRESS",
+              "COMPLETED",
+              "CANCELLED"
+            ],
+            "example": "IN_PROGRESS",
+            "description": "Nuevo estado del mantenimiento (IN_PROGRESS, COMPLETED, CANCELLED)"
+          },
+          "workDone": {
+            "type": "string",
+            "example": "Reemplazo de pastillas de frenos y purga de líquido",
+            "description": "Obligatorio si status es COMPLETED"
+          },
+          "finalCost": {
+            "type": "number",
+            "example": 450.5,
+            "description": "Costo final del mantenimiento. Obligatorio si status es COMPLETED"
+          },
+          "completedDate": {
+            "type": "string",
+            "example": "2026-11-01T12:00:00Z",
+            "description": "Fecha de finalización (ISO 8601). Obligatorio si status es COMPLETED"
+          },
+          "finalMileage": {
+            "type": "number",
+            "example": 45010,
+            "description": "Kilometraje final al completar. Obligatorio si status es COMPLETED"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      }
+    }
+  }
+}

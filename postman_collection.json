@@ -1,0 +1,398 @@
+{
+  "info": {
+    "name": "FleetCore API — Gestión de Mantenimiento de Flota",
+    "description": "Colección completa de endpoints para FleetCore (Auth, Users, Vehicles, Mechanics, Workshops, Maintenances, Integrations)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000/api",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "apiKey",
+      "value": "fleetcore-secret-api-key-2026",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Auth",
+      "item": [
+        {
+          "name": "Login Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data.accessToken) {",
+                  "  pm.collectionVariables.set('token', res.data.accessToken);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@fleetcore.com\",\n  \"password\": \"Admin12345!\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] }
+          }
+        },
+        {
+          "name": "Login Technician 1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data.accessToken) {",
+                  "  pm.collectionVariables.set('token', res.data.accessToken);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"tech1@fleetcore.com\",\n  \"password\": \"Tech12345!\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] }
+          }
+        },
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Nuevo Técnico\",\n  \"email\": \"nuevo.tech@fleetcore.com\",\n  \"password\": \"Tech12345!\",\n  \"role\": \"TECHNICIAN\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/register", "host": ["{{baseUrl}}"], "path": ["auth", "register"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Users",
+      "item": [
+        {
+          "name": "Get Profile (Me)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/users/me", "host": ["{{baseUrl}}"], "path": ["users", "me"] }
+          }
+        },
+        {
+          "name": "Get All Users (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/users", "host": ["{{baseUrl}}"], "path": ["users"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Vehicles",
+      "item": [
+        {
+          "name": "List Vehicles (Paginated & Filter)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/vehicles?page=1&limit=10&search=",
+              "host": ["{{baseUrl}}"],
+              "path": ["vehicles"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "search", "value": "" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Vehicle by Plate or ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/vehicles/AAA111", "host": ["{{baseUrl}}"], "path": ["vehicles", "AAA111"] }
+          }
+        },
+        {
+          "name": "Create Vehicle (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"plate\": \"XYZ789\",\n  \"brand\": \"Hino\",\n  \"model\": \"500 Series\",\n  \"year\": 2023,\n  \"mileage\": 15000,\n  \"status\": \"AVAILABLE\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/vehicles", "host": ["{{baseUrl}}"], "path": ["vehicles"] }
+          }
+        },
+        {
+          "name": "Update Vehicle (Admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mileage\": 16500\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/vehicles/XYZ789", "host": ["{{baseUrl}}"], "path": ["vehicles", "XYZ789"] }
+          }
+        },
+        {
+          "name": "Delete / Inactivate Vehicle (Admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/vehicles/XYZ789", "host": ["{{baseUrl}}"], "path": ["vehicles", "XYZ789"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Mechanics",
+      "item": [
+        {
+          "name": "List Mechanics",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/mechanics", "host": ["{{baseUrl}}"], "path": ["mechanics"] }
+          }
+        },
+        {
+          "name": "Create Mechanic (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Luis Restrepo\",\n  \"email\": \"luis.restrepo@fleetcore.com\",\n  \"specialty\": \"Transmisiones y Cajas\",\n  \"status\": \"ACTIVE\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/mechanics", "host": ["{{baseUrl}}"], "path": ["mechanics"] }
+          }
+        },
+        {
+          "name": "Toggle Mechanic Status (Admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/mechanics/:id/toggle-status", "host": ["{{baseUrl}}"], "path": ["mechanics", ":id", "toggle-status"], "variable": [{ "key": "id", "value": "" }] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Workshops",
+      "item": [
+        {
+          "name": "List Active Workshops",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/workshops/active", "host": ["{{baseUrl}}"], "path": ["workshops", "active"] }
+          }
+        },
+        {
+          "name": "List All Workshops",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/workshops", "host": ["{{baseUrl}}"], "path": ["workshops"] }
+          }
+        },
+        {
+          "name": "Create Workshop (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Taller Sur FleetCore\",\n  \"address\": \"Autopista Sur km 8, Itagüí\",\n  \"status\": \"ACTIVE\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/workshops", "host": ["{{baseUrl}}"], "path": ["workshops"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Maintenances",
+      "item": [
+        {
+          "name": "List All Maintenances",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/maintenances", "host": ["{{baseUrl}}"], "path": ["maintenances"] }
+          }
+        },
+        {
+          "name": "List Active Maintenances",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/maintenances/active", "host": ["{{baseUrl}}"], "path": ["maintenances", "active"] }
+          }
+        },
+        {
+          "name": "Get My Assigned Maintenances (Technician)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/maintenances/my-assigned", "host": ["{{baseUrl}}"], "path": ["maintenances", "my-assigned"] }
+          }
+        },
+        {
+          "name": "Create Maintenance (Admin/Manager)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"vehicleId\": \"ccccccc2-cccc-cccc-cccc-cccccccccccc\",\n  \"mechanicId\": \"aaaaaaa2-aaaa-aaaa-aaaa-aaaaaaaaaaaa\",\n  \"workshopId\": \"bbbbbbb1-bbbb-bbbb-bbbb-bbbbbbbbbbbb\",\n  \"type\": \"PREVENTIVE\",\n  \"description\": \"Revisión y mantenimiento preventivo\",\n  \"mileage\": 120000,\n  \"scheduledDate\": \"2026-11-05T09:00:00Z\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/maintenances", "host": ["{{baseUrl}}"], "path": ["maintenances"] }
+          }
+        },
+        {
+          "name": "Change Status to IN_PROGRESS",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"IN_PROGRESS\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/maintenances/:id/status", "host": ["{{baseUrl}}"], "path": ["maintenances", ":id", "status"], "variable": [{ "key": "id", "value": "" }] }
+          }
+        },
+        {
+          "name": "Change Status to COMPLETED",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"COMPLETED\",\n  \"workDone\": \"Ajuste general, cambio de filtros y prueba en ruta\",\n  \"finalCost\": 520.00,\n  \"completedDate\": \"2026-11-05T15:00:00Z\",\n  \"finalMileage\": 120015\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/maintenances/:id/status", "host": ["{{baseUrl}}"], "path": ["maintenances", ":id", "status"], "variable": [{ "key": "id", "value": "" }] }
+          }
+        },
+        {
+          "name": "Change Status to CANCELLED",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"CANCELLED\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/maintenances/:id/status", "host": ["{{baseUrl}}"], "path": ["maintenances", ":id", "status"], "variable": [{ "key": "id", "value": "" }] }
+          }
+        },
+        {
+          "name": "Get Maintenance History by Vehicle (UUID or Plate)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/maintenances/vehicle/AAA111", "host": ["{{baseUrl}}"], "path": ["maintenances", "vehicle", "AAA111"] }
+          }
+        },
+        {
+          "name": "Get Vehicle Maintenances via Sub-resource",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/vehicles/AAA111/maintenances", "host": ["{{baseUrl}}"], "path": ["vehicles", "AAA111", "maintenances"] }
+          }
+        },
+        {
+          "name": "Get Maintenance by ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/maintenances/ddddddd1-dddd-dddd-dddd-dddddddddddd", "host": ["{{baseUrl}}"], "path": ["maintenances", "ddddddd1-dddd-dddd-dddd-dddddddddddd"] }
+          }
+        },
+        {
+          "name": "Cancel Maintenance (Delete endpoint)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/maintenances/:id", "host": ["{{baseUrl}}"], "path": ["maintenances", ":id"], "variable": [{ "key": "id", "value": "" }] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Integrations (x-api-key)",
+      "item": [
+        {
+          "name": "Get Fleet Status Summary",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "x-api-key", "value": "{{apiKey}}" }],
+            "url": { "raw": "{{baseUrl}}/integrations/fleet-status", "host": ["{{baseUrl}}"], "path": ["integrations", "fleet-status"] }
+          }
+        },
+        {
+          "name": "Get Active Maintenances for ERP",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "x-api-key", "value": "{{apiKey}}" }],
+            "url": { "raw": "{{baseUrl}}/integrations/active-maintenances", "host": ["{{baseUrl}}"], "path": ["integrations", "active-maintenances"] }
+          }
+        }
+      ]
+    }
+  ]
+}
