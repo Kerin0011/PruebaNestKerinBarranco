@@ -2,7 +2,6 @@ import { ConflictException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Test } from '@nestjs/testing';
 import { compare, hash } from 'bcryptjs';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Role } from '../common/enums/role.enum.js';
 import { UsersService } from '../users/users.service.js';
 import { AuthService } from './auth.service.js';
@@ -11,13 +10,13 @@ describe('AuthService', () => {
   let service: AuthService;
 
   const usersService = {
-    findByEmail: vi.fn(),
-    findByEmailWithPassword: vi.fn(),
-    create: vi.fn(),
+    findByEmail: jest.fn(),
+    findByEmailWithPassword: jest.fn(),
+    create: jest.fn(),
   };
 
   const jwtService = {
-    signAsync: vi.fn().mockResolvedValue('jwt-fake-token-fleetcore'),
+    signAsync: jest.fn().mockResolvedValue('jwt-fake-token-fleetcore'),
   };
 
   const dto = {
@@ -28,7 +27,7 @@ describe('AuthService', () => {
   };
 
   beforeEach(async () => {
-    vi.clearAllMocks();
+    jest.clearAllMocks();
     const moduleRef = await Test.createTestingModule({
       providers: [
         AuthService,

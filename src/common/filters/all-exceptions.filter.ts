@@ -21,6 +21,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     let status: number = HttpStatus.INTERNAL_SERVER_ERROR;
     let message: string | string[] = 'Error interno del servidor';
 
+    // 1. Procesamiento de excepciones HTTP estándar de NestJS
     if (exception instanceof HttpException) {
       status = exception.getStatus();
       const body = exception.getResponse();
@@ -28,6 +29,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
         typeof body === 'string'
           ? body
           : ((body as { message?: string | string[] }).message ?? exception.message);
+    // 2. Mapeo de errores de base de datos PostgreSQL para no generar códigos 500
     } else if (exception instanceof QueryFailedError) {
       const code = (exception.driverError as { code?: string })?.code;
       if (code === '23505') {
@@ -41,6 +43,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
     if (status === HttpStatus.INTERNAL_SERVER_ERROR) this.logger.error(exception);
 
+    // 3. Estructura uniforme de respuesta de error requerida por la API
     res.status(status).json({
       success: false,
       statusCode: status,

@@ -17,16 +17,19 @@ export class JwtAuthGuard implements CanActivate {
   ) {}
 
   async canActivate(ctx: ExecutionContext): Promise<boolean> {
+    // 1. Permitir acceso libre si la ruta está decorada con @PublicRoute()
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       ctx.getHandler(),
       ctx.getClass(),
     ]);
     if (isPublic) return true;
 
+    // 2. Extraer y validar el formato del token Bearer en la cabecera Authorization
     const req = ctx.switchToHttp().getRequest<AuthRequest>();
     const [type, token] = req.headers.authorization?.split(' ') ?? [];
     if (type !== 'Bearer' || !token) throw new UnauthorizedException('Token requerido');
 
+    // 3. Verificar validez de la firma y vigencia del JWT, adjuntando el payload a la solicitud
     try {
       req.user = await this.jwt.verifyAsync<JwtPayload>(token);
     } catch {

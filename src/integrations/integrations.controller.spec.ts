@@ -1,10 +1,9 @@
-import { describe, expect, it, vi } from 'vitest';
 import { IntegrationsController } from './integrations.controller.js';
 
 describe('IntegrationsController', () => {
   it('retorna el resumen estadístico de la flota', async () => {
     const vehiclesService = {
-      findAll: vi.fn().mockResolvedValue({
+      findAll: jest.fn().mockResolvedValue({
         items: [
           { id: 'v1', status: 'AVAILABLE' },
           { id: 'v2', status: 'AVAILABLE' },
@@ -15,7 +14,7 @@ describe('IntegrationsController', () => {
       }),
     };
     const maintenancesService = {
-      findActive: vi.fn(),
+      findActive: jest.fn(),
     };
 
     const controller = new IntegrationsController(
@@ -34,9 +33,9 @@ describe('IntegrationsController', () => {
 
   it('retorna la lista de mantenimientos activos para ERPs externos', async () => {
     const activeList = [{ id: 'm1', status: 'IN_PROGRESS' }];
-    const vehiclesService = { findAll: vi.fn() };
+    const vehiclesService = { findAll: jest.fn() };
     const maintenancesService = {
-      findActive: vi.fn().mockResolvedValue(activeList),
+      findActive: jest.fn().mockResolvedValue(activeList),
     };
 
     const controller = new IntegrationsController(

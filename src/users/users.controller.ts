@@ -1,7 +1,7 @@
 import { Controller, Get, Param, ParseUUIDPipe } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Auth } from '../common/decorators/auth.decorator.js';
-import { CurrentUser } from '../common/decorators/current-user.decorator.js';
+import { ActiveUser } from '../common/decorators/current-user.decorator.js';
 import { Role } from '../common/enums/role.enum.js';
 import { UsersService } from './users.service.js';
 
@@ -14,7 +14,7 @@ export class UsersController {
   @Auth()
   @ApiOperation({ summary: 'Obtener información del usuario autenticado' })
   @Get('me')
-  me(@CurrentUser('sub') userId: string) {
+  me(@ActiveUser('sub') userId: string) {
     return this.usersService.findOne(userId);
   }
 

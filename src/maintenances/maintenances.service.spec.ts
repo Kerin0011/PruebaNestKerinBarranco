@@ -2,7 +2,6 @@ import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MaintenanceStatus } from '../common/enums/maintenance-status.enum.js';
 import { MaintenanceType } from '../common/enums/maintenance-type.enum.js';
 import { MechanicStatus } from '../common/enums/mechanic-status.enum.js';
@@ -18,40 +17,41 @@ describe('MaintenancesService', () => {
   let service: MaintenancesService;
 
   const mockMaintenanceRepo = {
-    findOne: vi.fn(),
-    find: vi.fn(),
-    save: vi.fn(),
-    create: vi.fn((dto) => ({ id: 'm1', ...dto })),
-    createQueryBuilder: vi.fn(),
+    findOne: jest.fn(),
+    find: jest.fn(),
+    save: jest.fn(),
+    create: jest.fn((dto) => ({ id: 'm1', ...dto })),
+    createQueryBuilder: jest.fn(),
   };
 
   const mockVehicleRepo = {
-    findOne: vi.fn(),
-    count: vi.fn(),
-    save: vi.fn(),
+    findOne: jest.fn(),
+    count: jest.fn(),
+    save: jest.fn(),
   };
 
   const mockMechanicRepo = {
-    findOne: vi.fn(),
-    save: vi.fn(),
+    findOne: jest.fn(),
+    save: jest.fn(),
   };
 
   const mockWorkshopRepo = {
-    findOne: vi.fn(),
-    save: vi.fn(),
+    findOne: jest.fn(),
+    save: jest.fn(),
   };
 
   const mockEntityManager = {
-    findOne: vi.fn(),
-    save: vi.fn(),
+    findOne: jest.fn(),
+    save: jest.fn(),
   };
 
   const mockDataSource = {
-    transaction: vi.fn((cb) => cb(mockEntityManager)),
+    transaction: jest.fn((cb) => cb(mockEntityManager)),
   };
 
   beforeEach(async () => {
-    vi.clearAllMocks();
+    jest.clearAllMocks();
+    mockMaintenanceRepo.find.mockResolvedValue([]);
 
     const moduleRef = await Test.createTestingModule({
       providers: [
@@ -128,6 +128,63 @@ describe('MaintenancesService', () => {
       });
 
       await expect(service.create(validDto)).rejects.toThrow(BadRequestException);
+    });
+
+    it('rechaza la creación si el mecánico tiene un mantenimiento con horario cruzado', async () => {
+      mockVehicleRepo.findOne.mockResolvedValue({
+        id: 'v1',
+        status: VehicleStatus.AVAILABLE,
+        mileage: 40000,
+      });
+      mockMaintenanceRepo.findOne.mockResolvedValue(null);
+      mockMechanicRepo.findOne.mockResolvedValue({
+        id: 'm1',
+        status: MechanicStatus.ACTIVE,
+      });
+      mockMaintenanceRepo.find.mockResolvedValue([
+        {
+          id: 'prev-m',
+          mechanicId: 'm1',
+          scheduledDate: new Date('2026-11-01T07:30:00Z'),
+          status: MaintenanceStatus.SCHEDULED,
+        },
+      ]);
+
+      await expect(
+        service.create({ ...validDto, scheduledDate: '2026-11-01T08:00:00Z' }),
+      ).rejects.toThrow(BadRequestException);
+    });
+
+    it('permite la creación si el horario posterior no se cruza', async () => {
+      mockVehicleRepo.findOne.mockResolvedValue({
+        id: 'v1',
+        status: VehicleStatus.AVAILABLE,
+        mileage: 40000,
+      });
+      mockMaintenanceRepo.findOne.mockResolvedValue(null);
+      mockMechanicRepo.findOne.mockResolvedValue({
+        id: 'm1',
+        status: MechanicStatus.ACTIVE,
+      });
+      mockWorkshopRepo.findOne.mockResolvedValue({
+        id: 'w1',
+        status: WorkshopStatus.ACTIVE,
+      });
+      mockMaintenanceRepo.find.mockResolvedValue([
+        {
+          id: 'prev-m',
+          mechanicId: 'm1',
+          scheduledDate: new Date('2026-11-01T07:30:00Z'),
+          status: MaintenanceStatus.SCHEDULED,
+        },
+      ]);
+      mockMaintenanceRepo.save.mockImplementation((m) => Promise.resolve(m));
+
+      const result = await service.create({
+        ...validDto,
+        scheduledDate: '2026-11-01T09:00:00Z',
+      });
+      expect(result.status).toBe(MaintenanceStatus.SCHEDULED);
     });
 
     it('rechaza la creación si el taller está inactivo', async () => {

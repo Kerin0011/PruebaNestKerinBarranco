@@ -71,15 +71,27 @@ export class MaintenancesService {
       throw new BadRequestException('No se puede asignar un mecánico inactivo');
     }
 
-    const activeMechanicMaintenance = await this.maintenanceRepo.findOne({
+    const activeMechanicMaintenances = await this.maintenanceRepo.find({
       where: {
         mechanicId: dto.mechanicId,
         status: In([MaintenanceStatus.SCHEDULED, MaintenanceStatus.IN_PROGRESS]),
       },
     });
 
-    if (activeMechanicMaintenance) {
-      throw new BadRequestException('El mecánico ya tiene un mantenimiento activo o programado simultáneamente');
+    const newStart = new Date(dto.scheduledDate).getTime();
+    const durationMs = 90 * 60 * 1000;
+    const newEnd = newStart + durationMs;
+
+    const hasScheduleConflict = (activeMechanicMaintenances || []).some((m) => {
+      const mStart = new Date(m.scheduledDate).getTime();
+      const mEnd = mStart + durationMs;
+      return newStart < mEnd && mStart < newEnd;
+    });
+
+    if (hasScheduleConflict) {
+      throw new BadRequestException(
+        'El mecánico ya tiene un mantenimiento activo o programado que se cruza con este horario',
+      );
     }
 
     const workshop = await this.workshopRepo.findOne({ where: { id: dto.workshopId } });
@@ -253,6 +265,7 @@ export class MaintenancesService {
     dto: UpdateStatusDto,
     currentUser?: JwtPayload,
   ): Promise<Maintenance> {
+    // Transacción atómica: sincroniza el estado del mantenimiento y la disponibilidad del vehículo en una sola unidad de trabajo
     return this.dataSource.transaction(async (manager) => {
       const maintenance = await manager.findOne(Maintenance, {
         where: { id },
@@ -263,6 +276,7 @@ export class MaintenancesService {
         throw new NotFoundException(`Mantenimiento con ID ${id} no encontrado`);
       }
 
+      // Validar que un técnico solo modifique sus propios mantenimientos asignados
       if (currentUser && currentUser.role === Role.TECHNICIAN) {
         if (!maintenance.mechanic || maintenance.mechanic.userId !== currentUser.sub) {
           throw new ForbiddenException(
@@ -291,10 +305,12 @@ export class MaintenancesService {
         throw new NotFoundException(`Vehículo asociado no encontrado`);
       }
 
+      // Transición IN_PROGRESS: actualiza automáticamente el vehículo a IN_MAINTENANCE
       if (dto.status === MaintenanceStatus.IN_PROGRESS) {
         maintenance.status = MaintenanceStatus.IN_PROGRESS;
         vehicle.status = VehicleStatus.IN_MAINTENANCE;
         await manager.save(Vehicle, vehicle);
+      // Transición COMPLETED: registra cierre, actualiza odómetro y libera el vehículo a AVAILABLE
       } else if (dto.status === MaintenanceStatus.COMPLETED) {
         const workDone = dto.workDone ?? dto.description;
         const finalCost = dto.finalCost ?? dto.cost;

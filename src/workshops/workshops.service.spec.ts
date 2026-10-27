@@ -1,7 +1,6 @@
 import { NotFoundException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { WorkshopStatus } from '../common/enums/workshop-status.enum.js';
 import { Workshop } from './entities/workshop.entity.js';
 import { WorkshopsService } from './workshops.service.js';
@@ -10,15 +9,15 @@ describe('WorkshopsService', () => {
   let service: WorkshopsService;
 
   const mockRepo = {
-    findOne: vi.fn(),
-    find: vi.fn(),
-    create: vi.fn((data) => ({ id: 'w1', ...data })),
-    save: vi.fn((w) => Promise.resolve(w)),
-    createQueryBuilder: vi.fn(),
+    findOne: jest.fn(),
+    find: jest.fn(),
+    create: jest.fn((data) => ({ id: 'w1', ...data })),
+    save: jest.fn((w) => Promise.resolve(w)),
+    createQueryBuilder: jest.fn(),
   };
 
   beforeEach(async () => {
-    vi.clearAllMocks();
+    jest.clearAllMocks();
     const moduleRef = await Test.createTestingModule({
       providers: [
         WorkshopsService,

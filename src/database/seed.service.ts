@@ -41,7 +41,6 @@ export class SeedService implements OnApplicationBootstrap {
   async runSeed() {
     this.logger.log('--- Iniciando Seed de datos iniciales FleetCore ---');
 
-    // 1. Usuarios: 1 ADMIN y 2 TECHNICIAN
     const adminEmail = this.config.get('ADMIN_EMAIL', { infer: true }) || 'admin@fleetcore.com';
     const adminPassword = this.config.get('ADMIN_PASSWORD', { infer: true }) || 'Admin12345!';
 
@@ -84,7 +83,6 @@ export class SeedService implements OnApplicationBootstrap {
       this.logger.log(`Usuario TECHNICIAN 2 creado: tech2@fleetcore.com`);
     }
 
-    // 2. Mecánicos: 2 activos vinculados a los técnicos y 1 inactivo
     let mech1 = await this.mechanicRepo.findOne({ where: { email: 'carlos.gomez@fleetcore.com' } });
     if (!mech1) {
       mech1 = await this.mechanicRepo.save(
@@ -127,7 +125,6 @@ export class SeedService implements OnApplicationBootstrap {
       this.logger.log('Mecánico 3 (Inactivo) creado');
     }
 
-    // 3. Talleres: 1 activo y 1 inactivo
     let workshop1 = await this.workshopRepo.findOne({ where: { name: 'Taller Central FleetCore' } });
     if (!workshop1) {
       workshop1 = await this.workshopRepo.save(
@@ -152,7 +149,6 @@ export class SeedService implements OnApplicationBootstrap {
       this.logger.log('Taller 2 (Inactivo) creado: Taller Norte FleetCore');
     }
 
-    // 4. Vehículos: 2 AVAILABLE, 1 IN_MAINTENANCE y 1 INACTIVE
     let v1 = await this.vehicleRepo.findOne({ where: { plate: 'AAA111' } });
     if (!v1) {
       v1 = await this.vehicleRepo.save(
@@ -213,7 +209,6 @@ export class SeedService implements OnApplicationBootstrap {
       this.logger.log('Vehículo 4 (INACTIVE) creado: DDD444');
     }
 
-    // 5. Mantenimientos: 1 IN_PROGRESS (para v3 CCC333) y 1 COMPLETED (para v1 AAA111)
     const activeMaintenance = await this.maintenanceRepo.findOne({
       where: { vehicleId: v3.id, status: MaintenanceStatus.IN_PROGRESS },
     });

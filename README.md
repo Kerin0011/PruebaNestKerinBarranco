@@ -31,7 +31,7 @@ This solution replaces spreadsheets and manual records with an automated, transa
 - **Authentication & Security:**
   - JWT Authentication via `@nestjs/jwt`.
   - Password hashing with **bcryptjs** (10 salt rounds).
-  - RBAC authorization with `@Roles()`, `RolesGuard`, and `JwtAuthGuard`.
+  - RBAC authorization with `@AllowedRoles()`, `RolesGuard`, and `JwtAuthGuard`.
   - External system authentication via `x-api-key` header (`ApiKeyGuard`).
   - Security headers with **helmet** and **CORS** enabled.
 - **Validation & Transformation:**
@@ -67,7 +67,14 @@ Ensure your database credentials and ports match your local environment:
 - `DB_PORT`: Default PostgreSQL port (`5433`)
 - `DB_NAME`: Database name (`prueba_db`)
 
-### Step 3: Start PostgreSQL with Docker
+### Step 3: Run with Docker Compose (API + PostgreSQL)
+Para desplegar la aplicación completa (API y base de datos relacional PostgreSQL con persistencia y red interna):
+```bash
+docker compose up -d --build
+```
+> Esto iniciará tanto la base de datos `db` (PostgreSQL 17 con volumen `pgdata`) como la API `api` interconectados por la red interna bridge `fleetcore_net`.
+
+O si deseas iniciar únicamente la base de datos para desarrollo local:
 ```bash
 docker compose up -d db
 ```
@@ -207,16 +214,31 @@ The database comes pre-populated with idempotent test data:
 
 ---
 
-## 8. Automated Testing (Vitest)
+## 8. Automated Testing with Jest & Coverage (> 40%)
+
+El proyecto cuenta con suites de pruebas unitarias con **Jest** que validan exhaustivamente las funcionalidades clave y las reglas de negocio del sistema, incluyendo:
+- **Reglas de cambio de estado en mantenimientos:**
+  - `SCHEDULED` a `IN_PROGRESS`: Transición automática del vehículo a `IN_MAINTENANCE`.
+  - Validación estricta de cierre: Rechazo si faltan campos obligatorios (`workDone`, `finalCost`, `completedDate`, `finalMileage`).
+  - `IN_PROGRESS` a `COMPLETED`: Transición del vehículo de vuelta a `AVAILABLE` y actualización de kilometraje al `finalMileage`.
+  - Protección de estados terminales: Inmutabilidad de mantenimientos en `COMPLETED` o `CANCELLED`.
+- **Reglas de asignación y disponibilidad:**
+  - Bloqueo de creación con vehículos inactivos o con mantenimientos activos simultáneos.
+  - Bloqueo de asignación de mecánicos o talleres inactivos.
+  - Algoritmo de detección de solapamiento/cruce de horarios en citas de mecánicos.
+  - Validación de kilometraje registrado no inferior al odómetro actual del vehículo.
 
 ```bash
-# Run all unit tests
-npm run test
+# Ejecutar todas las pruebas unitarias con Jest
+npm test
 
-# Run tests with coverage report
+# Ejecutar pruebas con reporte de cobertura verificable con Jest (> 40% de cobertura)
 npm run test:cov
 
-# Run End-to-End (E2E) integration tests
+# O con el alias de cobertura
+npm run test:coverage
+
+# Ejecutar pruebas End-to-End (E2E)
 npm run test:e2e
 ```
 

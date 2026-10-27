@@ -1,13 +1,13 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
-import { Public } from '../common/decorators/public.decorator.js';
+import { PublicRoute } from '../common/decorators/public.decorator.js';
 import { ApiKeyGuard } from '../common/guards/api-key.guard.js';
 import { MaintenancesService } from '../maintenances/maintenances.service.js';
 import { VehiclesService } from '../vehicles/vehicles.service.js';
 
 @ApiTags('integrations')
 @ApiSecurity('x-api-key')
-@Public()
+@PublicRoute()
 @UseGuards(ApiKeyGuard)
 @Controller('integrations')
 export class IntegrationsController {

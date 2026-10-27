@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Auth } from '../common/decorators/auth.decorator.js';
-import { CurrentUser } from '../common/decorators/current-user.decorator.js';
+import { ActiveUser } from '../common/decorators/current-user.decorator.js';
 import { Role } from '../common/enums/role.enum.js';
 import type { JwtPayload } from '../common/interfaces/jwt-payload.interface.js';
 import { MechanicsService } from '../mechanics/mechanics.service.js';
@@ -54,7 +54,7 @@ export class MaintenancesController {
   @Auth(Role.TECHNICIAN, Role.ADMIN)
   @ApiOperation({ summary: 'Consultar mantenimientos asignados al técnico en sesión' })
   @Get('my-assigned')
-  async findMyAssigned(@CurrentUser() user: JwtPayload) {
+  async findMyAssigned(@ActiveUser() user: JwtPayload) {
     const mechanic = await this.mechanicsService.findByUserId(user.sub);
     if (!mechanic) {
       return [];
@@ -104,7 +104,7 @@ export class MaintenancesController {
   updateStatus(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateStatusDto,
-    @CurrentUser() user: JwtPayload,
+    @ActiveUser() user: JwtPayload,
   ) {
     return this.maintenancesService.updateStatus(id, dto, user);
   }
@@ -114,7 +114,7 @@ export class MaintenancesController {
   @Delete(':id')
   remove(
     @Param('id', ParseUUIDPipe) id: string,
-    @CurrentUser() user: JwtPayload,
+    @ActiveUser() user: JwtPayload,
   ) {
     return this.maintenancesService.remove(id, user);
   }

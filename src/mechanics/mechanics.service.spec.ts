@@ -1,7 +1,6 @@
 import { ConflictException, NotFoundException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MechanicStatus } from '../common/enums/mechanic-status.enum.js';
 import { Mechanic } from './entities/mechanic.entity.js';
 import { MechanicsService } from './mechanics.service.js';
@@ -10,14 +9,14 @@ describe('MechanicsService', () => {
   let service: MechanicsService;
 
   const mockRepo = {
-    findOne: vi.fn(),
-    create: vi.fn((data) => ({ id: 'm1', ...data })),
-    save: vi.fn((m) => Promise.resolve(m)),
-    createQueryBuilder: vi.fn(),
+    findOne: jest.fn(),
+    create: jest.fn((data) => ({ id: 'm1', ...data })),
+    save: jest.fn((m) => Promise.resolve(m)),
+    createQueryBuilder: jest.fn(),
   };
 
   beforeEach(async () => {
-    vi.clearAllMocks();
+    jest.clearAllMocks();
     const moduleRef = await Test.createTestingModule({
       providers: [
         MechanicsService,

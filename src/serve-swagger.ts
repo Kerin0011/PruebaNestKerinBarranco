@@ -36,7 +36,6 @@ async function bootstrap() {
   configureApp(app);
   setupSwagger(app);
 
-  // Generar y guardar la especificación OpenAPI (Swagger JSON)
   const swaggerConfig = new DocumentBuilder()
     .setTitle('FleetCore API — Gestión de Mantenimiento de Flota')
     .setDescription(

@@ -1,7 +1,6 @@
 import type { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { AppModule } from '../src/app.module.js';
 import { configureApp } from '../src/app.setup.js';
 
@@ -22,7 +21,6 @@ describe('Ciclo de Vida de Mantenimientos (e2e)', () => {
     configureApp(app);
     await app.init();
 
-    // Obtener token de administrador
     const loginRes = await request(app.getHttpServer())
       .post('/api/auth/login')
       .send({ email: 'admin@fleetcore.com', password: 'Admin12345!' });
@@ -112,7 +110,6 @@ describe('Ciclo de Vida de Mantenimientos (e2e)', () => {
 
     expect(patchRes.body.data.status).toBe('IN_PROGRESS');
 
-    // Verificar estado del vehículo
     const vehicleRes = await request(app.getHttpServer())
       .get(`/api/vehicles/${vehicleId}`)
       .set('Authorization', `Bearer ${adminToken}`)
@@ -137,7 +134,6 @@ describe('Ciclo de Vida de Mantenimientos (e2e)', () => {
     expect(patchRes.body.data.status).toBe('COMPLETED');
     expect(Number(patchRes.body.data.finalCost)).toBe(480.5);
 
-    // Verificar que el vehículo vuelve a AVAILABLE y actualiza su kilometraje a 10025
     const vehicleRes = await request(app.getHttpServer())
       .get(`/api/vehicles/${vehicleId}`)
       .set('Authorization', `Bearer ${adminToken}`)

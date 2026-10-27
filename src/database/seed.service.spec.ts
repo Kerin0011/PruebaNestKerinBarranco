@@ -1,42 +1,41 @@
 import { ConfigService } from '@nestjs/config';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { SeedService } from './seed.service.js';
 
 describe('SeedService', () => {
   let service: SeedService;
 
   const mockUserRepo = {
-    findOne: vi.fn(),
-    create: vi.fn((data) => ({ id: 'u-' + Math.random(), ...data })),
-    save: vi.fn((data) => Promise.resolve(data)),
+    findOne: jest.fn(),
+    create: jest.fn((data) => ({ id: 'u-' + Math.random(), ...data })),
+    save: jest.fn((data) => Promise.resolve(data)),
   };
 
   const mockMechanicRepo = {
-    findOne: vi.fn(),
-    create: vi.fn((data) => ({ id: 'm-' + Math.random(), ...data })),
-    save: vi.fn((data) => Promise.resolve(data)),
+    findOne: jest.fn(),
+    create: jest.fn((data) => ({ id: 'm-' + Math.random(), ...data })),
+    save: jest.fn((data) => Promise.resolve(data)),
   };
 
   const mockWorkshopRepo = {
-    findOne: vi.fn(),
-    create: vi.fn((data) => ({ id: 'w-' + Math.random(), ...data })),
-    save: vi.fn((data) => Promise.resolve(data)),
+    findOne: jest.fn(),
+    create: jest.fn((data) => ({ id: 'w-' + Math.random(), ...data })),
+    save: jest.fn((data) => Promise.resolve(data)),
   };
 
   const mockVehicleRepo = {
-    findOne: vi.fn(),
-    create: vi.fn((data) => ({ id: 'v-' + Math.random(), ...data })),
-    save: vi.fn((data) => Promise.resolve(data)),
+    findOne: jest.fn(),
+    create: jest.fn((data) => ({ id: 'v-' + Math.random(), ...data })),
+    save: jest.fn((data) => Promise.resolve(data)),
   };
 
   const mockMaintenanceRepo = {
-    findOne: vi.fn(),
-    create: vi.fn((data) => ({ id: 'mt-' + Math.random(), ...data })),
-    save: vi.fn((data) => Promise.resolve(data)),
+    findOne: jest.fn(),
+    create: jest.fn((data) => ({ id: 'mt-' + Math.random(), ...data })),
+    save: jest.fn((data) => Promise.resolve(data)),
   };
 
   const mockConfig = {
-    get: vi.fn((key) => {
+    get: jest.fn((key) => {
       if (key === 'ADMIN_EMAIL') return 'admin@fleetcore.com';
       if (key === 'ADMIN_PASSWORD') return 'Admin12345!';
       return null;
@@ -44,7 +43,7 @@ describe('SeedService', () => {
   };
 
   beforeEach(() => {
-    vi.clearAllMocks();
+    jest.clearAllMocks();
     service = new SeedService(
       mockUserRepo as any,
       mockMechanicRepo as any,
@@ -64,11 +63,11 @@ describe('SeedService', () => {
 
     await service.runSeed();
 
-    expect(mockUserRepo.save).toHaveBeenCalledTimes(3); // 1 admin + 2 techs
-    expect(mockMechanicRepo.save).toHaveBeenCalledTimes(3); // 3 mechanics
-    expect(mockWorkshopRepo.save).toHaveBeenCalledTimes(2); // 2 workshops
-    expect(mockVehicleRepo.save).toHaveBeenCalledTimes(4); // 4 vehicles
-    expect(mockMaintenanceRepo.save).toHaveBeenCalledTimes(2); // 1 in_progress + 1 completed
+    expect(mockUserRepo.save).toHaveBeenCalledTimes(3);
+    expect(mockMechanicRepo.save).toHaveBeenCalledTimes(3);
+    expect(mockWorkshopRepo.save).toHaveBeenCalledTimes(2);
+    expect(mockVehicleRepo.save).toHaveBeenCalledTimes(4);
+    expect(mockMaintenanceRepo.save).toHaveBeenCalledTimes(2);
   });
 
   it('es idempotente y no duplica registros si ya existen', async () => {

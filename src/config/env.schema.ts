@@ -14,6 +14,9 @@ export const envSchema = z.object({
   ADMIN_EMAIL: z.string().email(),
   ADMIN_PASSWORD: z.string().min(8),
   API_KEY: z.string().min(8).default('fleetcore-secret-api-key-2026'),
+  GITHUB_CLIENT_ID: z.string().optional().default('demo-github-client-id'),
+  GITHUB_CLIENT_SECRET: z.string().optional().default('demo-github-client-secret'),
+  GOOGLE_CLIENT_ID: z.string().optional().default('demo-google-client-id'),
 });
 
 export type Env = z.infer<typeof envSchema>;

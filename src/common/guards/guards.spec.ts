@@ -5,7 +5,6 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
-import { describe, expect, it, vi } from 'vitest';
 import { Role } from '../enums/role.enum.js';
 import { ApiKeyGuard } from './api-key.guard.js';
 import { JwtAuthGuard } from './jwt-auth.guard.js';
@@ -13,16 +12,16 @@ import { RolesGuard } from './roles.guard.js';
 
 describe('Guards', () => {
   describe('JwtAuthGuard', () => {
-    it('permite el acceso sin token si el endpoint tiene el decorador @Public()', async () => {
+    it('permite el acceso sin token si el endpoint tiene el decorador @PublicRoute()', async () => {
       const reflector = {
-        getAllAndOverride: vi.fn().mockReturnValue(true),
+        getAllAndOverride: jest.fn().mockReturnValue(true),
       } as unknown as Reflector;
       const jwt = {} as JwtService;
       const guard = new JwtAuthGuard(jwt, reflector);
 
       const context = {
-        getHandler: vi.fn(),
-        getClass: vi.fn(),
+        getHandler: jest.fn(),
+        getClass: jest.fn(),
       } as unknown as ExecutionContext;
 
       const canActivate = await guard.canActivate(context);
@@ -31,14 +30,14 @@ describe('Guards', () => {
 
     it('lanza UnauthorizedException si no se provee cabecera Authorization Bearer', async () => {
       const reflector = {
-        getAllAndOverride: vi.fn().mockReturnValue(false),
+        getAllAndOverride: jest.fn().mockReturnValue(false),
       } as unknown as Reflector;
       const jwt = {} as JwtService;
       const guard = new JwtAuthGuard(jwt, reflector);
 
       const context = {
-        getHandler: vi.fn(),
-        getClass: vi.fn(),
+        getHandler: jest.fn(),
+        getClass: jest.fn(),
         switchToHttp: () => ({
           getRequest: () => ({ headers: {} }),
         }),
@@ -49,10 +48,10 @@ describe('Guards', () => {
 
     it('valida el token y adjunta el usuario a la petición', async () => {
       const reflector = {
-        getAllAndOverride: vi.fn().mockReturnValue(false),
+        getAllAndOverride: jest.fn().mockReturnValue(false),
       } as unknown as Reflector;
       const jwt = {
-        verifyAsync: vi.fn().mockResolvedValue({ sub: 'u1', role: Role.ADMIN }),
+        verifyAsync: jest.fn().mockResolvedValue({ sub: 'u1', role: Role.ADMIN }),
       } as unknown as JwtService;
       const guard = new JwtAuthGuard(jwt, reflector);
 
@@ -61,8 +60,8 @@ describe('Guards', () => {
       };
 
       const context = {
-        getHandler: vi.fn(),
-        getClass: vi.fn(),
+        getHandler: jest.fn(),
+        getClass: jest.fn(),
         switchToHttp: () => ({
           getRequest: () => req,
         }),
@@ -77,13 +76,13 @@ describe('Guards', () => {
   describe('RolesGuard', () => {
     it('permite el acceso si no hay restricción de roles', () => {
       const reflector = {
-        getAllAndOverride: vi.fn().mockReturnValue(null),
+        getAllAndOverride: jest.fn().mockReturnValue(null),
       } as unknown as Reflector;
       const guard = new RolesGuard(reflector);
 
       const context = {
-        getHandler: vi.fn(),
-        getClass: vi.fn(),
+        getHandler: jest.fn(),
+        getClass: jest.fn(),
       } as unknown as ExecutionContext;
 
       expect(guard.canActivate(context)).toBe(true);
@@ -91,13 +90,13 @@ describe('Guards', () => {
 
     it('permite el acceso si el usuario tiene el rol requerido', () => {
       const reflector = {
-        getAllAndOverride: vi.fn().mockReturnValue([Role.ADMIN]),
+        getAllAndOverride: jest.fn().mockReturnValue([Role.ADMIN]),
       } as unknown as Reflector;
       const guard = new RolesGuard(reflector);
 
       const context = {
-        getHandler: vi.fn(),
-        getClass: vi.fn(),
+        getHandler: jest.fn(),
+        getClass: jest.fn(),
         switchToHttp: () => ({
           getRequest: () => ({ user: { role: Role.ADMIN } }),
         }),
@@ -108,13 +107,13 @@ describe('Guards', () => {
 
     it('lanza ForbiddenException si el rol del usuario no coincide', () => {
       const reflector = {
-        getAllAndOverride: vi.fn().mockReturnValue([Role.ADMIN]),
+        getAllAndOverride: jest.fn().mockReturnValue([Role.ADMIN]),
       } as unknown as Reflector;
       const guard = new RolesGuard(reflector);
 
       const context = {
-        getHandler: vi.fn(),
-        getClass: vi.fn(),
+        getHandler: jest.fn(),
+        getClass: jest.fn(),
         switchToHttp: () => ({
           getRequest: () => ({ user: { role: Role.TECHNICIAN } }),
         }),
@@ -126,7 +125,7 @@ describe('Guards', () => {
 
   describe('ApiKeyGuard', () => {
     const config = {
-      get: vi.fn().mockReturnValue('fleetcore-secret-key'),
+      get: jest.fn().mockReturnValue('fleetcore-secret-key'),
     };
     const guard = new ApiKeyGuard(config as any);
 

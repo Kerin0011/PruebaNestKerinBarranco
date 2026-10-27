@@ -4,15 +4,14 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { QueryFailedError } from 'typeorm';
-import { describe, expect, it, vi } from 'vitest';
 import { AllExceptionsFilter } from './all-exceptions.filter.js';
 
 describe('AllExceptionsFilter', () => {
   const filter = new AllExceptionsFilter();
 
   const createMockHost = (url: string = '/api/test') => {
-    const json = vi.fn();
-    const status = vi.fn().mockReturnValue({ json });
+    const json = jest.fn();
+    const status = jest.fn().mockReturnValue({ json });
     const response = { status };
     const request = { url };
 
