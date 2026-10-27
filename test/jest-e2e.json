@@ -3,7 +3,17 @@
   "rootDir": ".",
   "testRegex": ".e2e-spec.ts$",
   "transform": {
-    "^.+\\.(t|j)s$": "ts-jest"
+    "^.+\\.(t|j)s$": [
+      "ts-jest",
+      {
+        "tsconfig": {
+          "module": "commonjs",
+          "moduleResolution": "node",
+          "target": "es2022",
+          "isolatedModules": true
+        }
+      }
+    ]
   },
   "testEnvironment": "node",
   "moduleNameMapper": {
