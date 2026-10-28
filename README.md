@@ -38,7 +38,7 @@ This solution replaces spreadsheets and manual records with an automated, transa
   - Runtime environment validation with **Zod** (`envSchema`).
   - DTO validation and casting with **class-validator** and **class-transformer**.
 - **API Documentation:** Interactive Swagger UI at `/docs`.
-- **Testing:** Automated unit and end-to-end (E2E) testing with **Vitest** and **Supertest**.
+- **Testing:** Automated unit and end-to-end (E2E) testing with **Jest** and **Supertest**.
 - **Containerization:** Docker Compose setup with isolated development and testing databases.
 
 ---
