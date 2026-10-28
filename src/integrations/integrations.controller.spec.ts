@@ -4,7 +4,7 @@ import { IntegrationsController } from './integrations.controller.js';
 describe('IntegrationsController', () => {
   it('retorna el resumen estadístico de la flota', async () => {
     const vehiclesService = {
-      findAll: jest.fn().mockResolvedValue({
+      findAll: jest.fn<(...args: any[]) => Promise<any>>().mockResolvedValue({
         items: [
           { id: 'v1', status: 'AVAILABLE' },
           { id: 'v2', status: 'AVAILABLE' },
@@ -15,7 +15,7 @@ describe('IntegrationsController', () => {
       }),
     };
     const maintenancesService = {
-      findActive: jest.fn(),
+      findActive: jest.fn<(...args: any[]) => Promise<any>>(),
     };
 
     const controller = new IntegrationsController(
@@ -34,9 +34,9 @@ describe('IntegrationsController', () => {
 
   it('retorna la lista de mantenimientos activos para ERPs externos', async () => {
     const activeList = [{ id: 'm1', status: 'IN_PROGRESS' }];
-    const vehiclesService = { findAll: jest.fn() };
+    const vehiclesService = { findAll: jest.fn<(...args: any[]) => Promise<any>>() };
     const maintenancesService = {
-      findActive: jest.fn().mockResolvedValue(activeList),
+      findActive: jest.fn<(...args: any[]) => Promise<any>>().mockResolvedValue(activeList),
     };
 
     const controller = new IntegrationsController(

@@ -11,13 +11,13 @@ describe('AuthService', () => {
   let service: AuthService;
 
   const usersService = {
-    findByEmail: jest.fn(),
-    findByEmailWithPassword: jest.fn(),
-    create: jest.fn(),
+    findByEmail: jest.fn<(...args: any[]) => Promise<any>>(),
+    findByEmailWithPassword: jest.fn<(...args: any[]) => Promise<any>>(),
+    create: jest.fn<(...args: any[]) => any>(),
   };
 
   const jwtService = {
-    signAsync: jest.fn().mockResolvedValue('jwt-fake-token-fleetcore'),
+    signAsync: jest.fn<(...args: any[]) => Promise<any>>().mockResolvedValue('jwt-fake-token-fleetcore'),
   };
 
   const dto = {

@@ -52,7 +52,7 @@ describe('Guards', () => {
         getAllAndOverride: jest.fn().mockReturnValue(false),
       } as unknown as Reflector;
       const jwt = {
-        verifyAsync: jest.fn().mockResolvedValue({ sub: 'u1', role: Role.ADMIN }),
+        verifyAsync: jest.fn<(...args: any[]) => Promise<any>>().mockResolvedValue({ sub: 'u1', role: Role.ADMIN }),
       } as unknown as JwtService;
       const guard = new JwtAuthGuard(jwt, reflector);
 

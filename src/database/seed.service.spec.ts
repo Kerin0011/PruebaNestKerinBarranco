@@ -6,33 +6,33 @@ describe('SeedService', () => {
   let service: SeedService;
 
   const mockUserRepo = {
-    findOne: jest.fn(),
-    create: jest.fn((data) => ({ id: 'u-' + Math.random(), ...data })),
-    save: jest.fn((data) => Promise.resolve(data)),
+    findOne: jest.fn<(...args: any[]) => Promise<any>>(),
+    create: jest.fn((data: any) => ({ id: 'u-' + Math.random(), ...data })),
+    save: jest.fn((data: any) => Promise.resolve(data)),
   };
 
   const mockMechanicRepo = {
-    findOne: jest.fn(),
-    create: jest.fn((data) => ({ id: 'm-' + Math.random(), ...data })),
-    save: jest.fn((data) => Promise.resolve(data)),
+    findOne: jest.fn<(...args: any[]) => Promise<any>>(),
+    create: jest.fn((data: any) => ({ id: 'm-' + Math.random(), ...data })),
+    save: jest.fn((data: any) => Promise.resolve(data)),
   };
 
   const mockWorkshopRepo = {
-    findOne: jest.fn(),
-    create: jest.fn((data) => ({ id: 'w-' + Math.random(), ...data })),
-    save: jest.fn((data) => Promise.resolve(data)),
+    findOne: jest.fn<(...args: any[]) => Promise<any>>(),
+    create: jest.fn((data: any) => ({ id: 'w-' + Math.random(), ...data })),
+    save: jest.fn((data: any) => Promise.resolve(data)),
   };
 
   const mockVehicleRepo = {
-    findOne: jest.fn(),
-    create: jest.fn((data) => ({ id: 'v-' + Math.random(), ...data })),
-    save: jest.fn((data) => Promise.resolve(data)),
+    findOne: jest.fn<(...args: any[]) => Promise<any>>(),
+    create: jest.fn((data: any) => ({ id: 'v-' + Math.random(), ...data })),
+    save: jest.fn((data: any) => Promise.resolve(data)),
   };
 
   const mockMaintenanceRepo = {
-    findOne: jest.fn(),
-    create: jest.fn((data) => ({ id: 'mt-' + Math.random(), ...data })),
-    save: jest.fn((data) => Promise.resolve(data)),
+    findOne: jest.fn<(...args: any[]) => Promise<any>>(),
+    create: jest.fn((data: any) => ({ id: 'mt-' + Math.random(), ...data })),
+    save: jest.fn((data: any) => Promise.resolve(data)),
   };
 
   const mockConfig = {

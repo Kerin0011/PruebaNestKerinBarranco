@@ -10,9 +10,9 @@ describe('MechanicsService', () => {
   let service: MechanicsService;
 
   const mockRepo = {
-    findOne: jest.fn(),
-    create: jest.fn((data) => ({ id: 'm1', ...data })),
-    save: jest.fn((m) => Promise.resolve(m)),
+    findOne: jest.fn<(...args: any[]) => Promise<any>>(),
+    create: jest.fn((data: any) => ({ id: 'm1', ...data })),
+    save: jest.fn((m: any) => Promise.resolve(m)),
     createQueryBuilder: jest.fn(),
   };
 

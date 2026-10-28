@@ -11,15 +11,15 @@ describe('VehiclesService', () => {
   let service: VehiclesService;
 
   const mockRepo = {
-    findOne: jest.fn(),
-    create: jest.fn((data) => ({ id: 'v1', ...data })),
-    save: jest.fn((v) => Promise.resolve(v)),
-    softDelete: jest.fn().mockResolvedValue({ affected: 1 }),
+    findOne: jest.fn<(...args: any[]) => Promise<any>>(),
+    create: jest.fn((data: any) => ({ id: 'v1', ...data })),
+    save: jest.fn((v: any) => Promise.resolve(v)),
+    softDelete: jest.fn<(...args: any[]) => Promise<any>>().mockResolvedValue({ affected: 1 } as any),
     createQueryBuilder: jest.fn(),
   };
 
   const mockMaintenanceRepo = {
-    find: jest.fn(),
+    find: jest.fn<(...args: any[]) => Promise<any>>(),
   };
 
   beforeEach(async () => {

@@ -11,8 +11,8 @@ describe('AllExceptionsFilter', () => {
   const filter = new AllExceptionsFilter();
 
   const createMockHost = (url: string = '/api/test') => {
-    const json = jest.fn();
-    const status = jest.fn().mockReturnValue({ json });
+    const json = jest.fn<(...args: any[]) => any>();
+    const status = jest.fn<(...args: any[]) => any>().mockReturnValue({ json });
     const response = { status };
     const request = { url };
 
@@ -45,7 +45,7 @@ describe('AllExceptionsFilter', () => {
 
   it('traduce error de llave duplicada PostgreSQL (código 23505) a 409 Conflict', () => {
     const { host, status, json } = createMockHost('/api/vehicles');
-    const driverError = { code: '23505' };
+    const driverError = Object.assign(new Error('Query failed'), { code: '23505' });
     const queryError = new QueryFailedError('INSERT INTO vehicles', [], driverError);
 
     filter.catch(queryError, host);
@@ -62,7 +62,7 @@ describe('AllExceptionsFilter', () => {
 
   it('traduce error de clave foránea inexistente (código 23503) a 400 Bad Request', () => {
     const { host, status, json } = createMockHost('/api/maintenances');
-    const driverError = { code: '23503' };
+    const driverError = Object.assign(new Error('Query failed'), { code: '23503' });
     const queryError = new QueryFailedError('INSERT INTO maintenances', [], driverError);
 
     filter.catch(queryError, host);

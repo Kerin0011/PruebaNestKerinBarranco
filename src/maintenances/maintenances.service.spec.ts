@@ -18,36 +18,36 @@ describe('MaintenancesService', () => {
   let service: MaintenancesService;
 
   const mockMaintenanceRepo = {
-    findOne: jest.fn(),
-    find: jest.fn(),
-    save: jest.fn(),
-    create: jest.fn((dto) => ({ id: 'm1', ...dto })),
+    findOne: jest.fn<(...args: any[]) => Promise<any>>(),
+    find: jest.fn<(...args: any[]) => Promise<any>>(),
+    save: jest.fn<(...args: any[]) => Promise<any>>((m: any) => Promise.resolve(m)),
+    create: jest.fn((dto: any) => ({ id: 'm1', ...dto })),
     createQueryBuilder: jest.fn(),
   };
 
   const mockVehicleRepo = {
-    findOne: jest.fn(),
-    count: jest.fn(),
-    save: jest.fn(),
+    findOne: jest.fn<(...args: any[]) => Promise<any>>(),
+    count: jest.fn<(...args: any[]) => Promise<any>>(),
+    save: jest.fn<(...args: any[]) => Promise<any>>((v: any) => Promise.resolve(v)),
   };
 
   const mockMechanicRepo = {
-    findOne: jest.fn(),
-    save: jest.fn(),
+    findOne: jest.fn<(...args: any[]) => Promise<any>>(),
+    save: jest.fn<(...args: any[]) => Promise<any>>((m: any) => Promise.resolve(m)),
   };
 
   const mockWorkshopRepo = {
-    findOne: jest.fn(),
-    save: jest.fn(),
+    findOne: jest.fn<(...args: any[]) => Promise<any>>(),
+    save: jest.fn<(...args: any[]) => Promise<any>>((w: any) => Promise.resolve(w)),
   };
 
   const mockEntityManager = {
-    findOne: jest.fn(),
-    save: jest.fn(),
+    findOne: jest.fn<(...args: any[]) => Promise<any>>(),
+    save: jest.fn<(...args: any[]) => Promise<any>>((e: any) => Promise.resolve(e)),
   };
 
   const mockDataSource = {
-    transaction: jest.fn((cb) => cb(mockEntityManager)),
+    transaction: jest.fn((cb: any) => cb(mockEntityManager)),
   };
 
   beforeEach(async () => {
